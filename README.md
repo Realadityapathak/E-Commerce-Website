@@ -10,7 +10,7 @@
   [![Stripe](https://img.shields.io/badge/Stripe-626CD9?style=for-the-badge&logo=Stripe&logoColor=white)](https://stripe.com/)
   [![Sanity](https://img.shields.io/badge/Sanity-F03E2F?style=for-the-badge&logo=sanity&logoColor=white)](https://www.sanity.io/)
   
-  [🚀 Live Demo](#) • [📱 Sanity Studio](#) • [📖 Documentation](#)
+  [🚀 Live Demo](https://e-commerce-website-zeta-livid.vercel.app/) • [📱 Sanity Studio](#) • [📖 Documentation](#)
 </div>
 
 ---
