@@ -8,6 +8,7 @@ export default async function handler(req, res) {
       const params = {
         submit_type: 'pay',
         mode: 'payment',
+        // Simplified to only request 'card' for this test
         payment_method_types: ['card'],
         billing_address_collection: 'auto',
         shipping_options: [
