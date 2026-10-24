@@ -74,6 +74,8 @@ export const StateContext = ({ children }) => {
     setCartItems((prevItems) => removeFromCart(prevItems, product._id));
   };
 
+  // Correctly-spelled implementation; the misspelled alias below is kept so
+  // existing imports (`toggleCartItemQuanitity`) keep working unchanged.
   const toggleCartItemQuantityHandler = (id, value) => {
     setCartItems((prevItems) => toggleCartItemQuantity(prevItems, id, value));
   };
@@ -87,9 +89,22 @@ export const StateContext = ({ children }) => {
     }
   };
 
-  const incQty = () => setQty((prevQty) => prevQty + 1);
+  const incQty = () => {
+    setQty((prevQty) => prevQty + 1);
+  };
 
-  const decQty = () => setQty((prevQty) => (prevQty - 1 < 1 ? 1 : prevQty - 1));
+  const decQty = () => {
+    setQty((prevQty) => {
+      if (prevQty - 1 < 1) return 1;
+      return prevQty - 1;
+    });
+  };
+
+  // Kept for backward compatibility with existing consumers (e.g. older
+  // success-page code). Totals are derived now, so these are intentionally
+  // no-ops; prefer `clearCart()` for new code.
+  const setTotalPrice = () => {};
+  const setTotalQuantities = () => {};
 
   const value = useMemo(
     () => ({
@@ -99,12 +114,18 @@ export const StateContext = ({ children }) => {
       totalPrice,
       totalQuantities,
       qty,
+      setQty,
       incQty,
       decQty,
       onAdd,
       toggleCartItemQuantity: toggleCartItemQuantityHandler,
+      // Deprecated alias — do not use in new code.
+      toggleCartItemQuanitity: toggleCartItemQuantityHandler,
       onRemove,
       clearCart,
+      setCartItems,
+      setTotalPrice,
+      setTotalQuantities,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [showCart, cartItems, totalPrice, totalQuantities, qty]

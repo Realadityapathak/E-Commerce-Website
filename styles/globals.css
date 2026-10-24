@@ -32,6 +32,12 @@ width: 100%;
   margin: 6px 18px;
   position: relative;
 }
+.marquee-text{
+  font-size: 29px;
+  font-weight: 600;
+  margin: 60px 0px;
+  color: #f02d34;
+}
 .marquee {
   position: relative;
   height: 400px;
@@ -54,6 +60,10 @@ width: 100%;
   to { transform: translateX(-50%); }
 }
 
+ span.text-red {
+    -webkit-text-stroke: 1px #f02d34;
+    margin-left: 6px;
+}
 .logo{
   color: gray;
   font-size: 18px;
@@ -183,6 +193,7 @@ text-align: end;
   margin-bottom: 12px;
   font-weight: 700;
   font-size: 16px;
+  /* color: black; */
   align-self: flex-end;
 }
 .products-heading{
@@ -235,6 +246,8 @@ text-align: end;
 }
 .footer-banner-image{
   position: absolute;
+  /* top: -35%;
+  left: 8%; */
   top: -25%;
   left: 25%;
 }
@@ -247,6 +260,10 @@ text-align: end;
 }
 .banner-desc .right p{
   font-size: 18px;
+}
+.banner-desc .right .company-desc{
+  font-size: 14px;
+  font-weight: 300;
 }
 .cart-wrapper{
   width: 100vw;
@@ -313,6 +330,9 @@ text-align: end;
 .empty-cart h3{
   font-weight: 600;
   font-size: 20px;
+}
+.cancel{
+  cursor: pointer;
 }
 .product-container{
   margin-top: 15px;
@@ -382,6 +402,7 @@ padding: 30px 65px;
   border-radius: 15px;
   border: none;
   font-size: 20px;
+  margin-top: 10px;
   margin-top: 40px;
   text-transform: uppercase;
   background-color: #f02d34;
@@ -454,6 +475,10 @@ padding: 30px 65px;
   font-size: 26px;
   margin-top: 30px;
   color:#f02d34;
+}
+.price .old-price, .product-price .old-price, .price .old-price{
+  color: gray;
+  text-decoration: line-through;
 }
 .product-detail-desc .quantity{
   display: flex;
@@ -548,12 +573,16 @@ padding: 6px;
   gap: 15px;
   margin-top: 20px;
 }
-.success-wrapper{
+.max-qty{
+  font-weight: 500;
+  color: #f02d34;
+}
+.success-wrapper, .cancel-wrapper{
   background-color: white;
   min-height: 60vh;
 
 }
-.success{
+.success, .cancel{
   width: 1000px;
 margin: auto;
 margin-top: 160px;
@@ -582,6 +611,10 @@ margin-top: 160px;
   font-weight: 600;
   text-align: center;
 }
+.cancel p{
+  font-size: 20px;
+  font-weight: 600;
+}
 .success .description{
   font-size: 16px;
   font-weight: 600;
@@ -593,6 +626,10 @@ margin-top: 160px;
   margin-left: 5px;
   color: #f02d34;
 }
+.product-max-qty{
+  margin-top: 10px;
+}
+
 @media screen and (max-width:800px) {
   .hero-banner-container{
     height: 560px;
@@ -626,6 +663,9 @@ margin-top: 160px;
   }
   .banner-desc .right p{
     font-size: 18px;
+  }
+  .banner-desc .right .company-desc{
+    font-size: 14px;
   }
   .banner-desc{
     flex-wrap: wrap;
@@ -713,11 +753,11 @@ margin-top: 160px;
   animation: marquee 10s linear infinite;
   width: 550%;
 }
-.success-wrapper{
+.success-wrapper, .cancel-wrapper{
  
   min-height: 69vh;
 }
-.success {
+.success, .cancel {
    width: 370px;
   margin-top: 100px;
   padding: 20px;
