@@ -5,7 +5,7 @@ import { Product, FooterBanner, HeroBanner } from '../components';
 
 const Home = ({ products, bannerData }) => (
   <div>
-    <HeroBanner heroBanner={bannerData.length && bannerData[0]}  />
+    <HeroBanner heroBanner={bannerData?.[0] ?? null} />
     <div className="products-heading">
       <h2>Best Seller Products</h2>
       <p>speaker There are many variations passages</p>
@@ -15,20 +15,35 @@ const Home = ({ products, bannerData }) => (
       {products?.map((product) => <Product key={product._id} product={product} />)}
     </div>
 
-    <FooterBanner footerBanner={bannerData && bannerData[0]} />
+    <FooterBanner footerBanner={bannerData?.[0] ?? null} />
   </div>
 );
 
-export const getServerSideProps = async () => {
-  const query = '*[_type == "product"]';
-  const products = await client.fetch(query);
+// The catalog changes rarely, so serve it statically with ISR instead of
+// hitting Sanity on every request (previous getServerSideProps). Pages
+// revalidate in the background; a Sanity outage serves the last good page
+// or an empty catalog briefly instead of a 500.
+export const getStaticProps = async () => {
+  try {
+    const [products, bannerData] = await Promise.all([
+      client.fetch('*[_type == "product"]'),
+      client.fetch('*[_type == "banner"]'),
+    ]);
 
-  const bannerQuery = '*[_type == "banner"]';
-  const bannerData = await client.fetch(bannerQuery);
-
-  return {
-    props: { products, bannerData }
+    return {
+      props: {
+        products: products || [],
+        bannerData: bannerData || [],
+      },
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error('[pages/index] Failed to fetch catalog:', error);
+    return {
+      props: { products: [], bannerData: [] },
+      revalidate: 30,
+    };
   }
-}
+};
 
 export default Home;

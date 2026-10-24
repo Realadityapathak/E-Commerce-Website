@@ -169,8 +169,13 @@ Before you begin, ensure you have the following installed:
    
    # Sanity Configuration
    NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
-   NEXT_PUBLIC_SANITY_TOKEN=your_sanity_read_token
+   # Optional, server-only — only if your dataset is private. See .env.example
+   # SANITY_API_TOKEN=your_sanity_read_token
    ```
+
+   > See [`.env.example`](.env.example) for all variables and
+   > [`IMPROVEMENTS.md`](IMPROVEMENTS.md) for recent hardening changes
+   > (including why the browser no longer receives a Sanity token).
 
 3. **Get your API keys**
    

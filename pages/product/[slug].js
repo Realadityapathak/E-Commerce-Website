@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { AiOutlineMinus, AiOutlinePlus, AiFillStar, AiOutlineStar } from 'react-icons/ai';
 
 import { client, urlFor } from '../../lib/client';
@@ -12,26 +13,36 @@ const ProductDetails = ({ product, products }) => {
 
   const handleBuyNow = () => {
     onAdd(product, qty);
-
     setShowCart(true);
   }
+
+  const mainImageBuilder = urlFor(image && image[index]);
 
   return (
     <div>
       <div className="product-detail-container">
         <div>
           <div className="image-container">
-            <img src={urlFor(image && image[index])} className="product-detail-image" />
+            {mainImageBuilder && (
+              <Image src={mainImageBuilder.url()} alt={name} width={400} height={400} className="product-detail-image" />
+            )}
           </div>
           <div className="small-images-container">
-            {image?.map((item, i) => (
-              <img 
-                key={i}
-                src={urlFor(item)}
-                className={i === index ? 'small-image selected-image' : 'small-image'}
-                onMouseEnter={() => setIndex(i)}
-              />
-            ))}
+            {image?.map((item, i) => {
+              const thumbnailBuilder = urlFor(item);
+              if (!thumbnailBuilder) return null;
+              return (
+                <Image
+                  key={item._key || i}
+                  src={thumbnailBuilder.url()}
+                  alt={`${name} view ${i + 1}`}
+                  width={70}
+                  height={70}
+                  className={i === index ? 'small-image selected-image' : 'small-image'}
+                  onMouseEnter={() => setIndex(i)}
+                />
+              );
+            })}
           </div>
         </div>
 
@@ -55,9 +66,9 @@ const ProductDetails = ({ product, products }) => {
           <div className="quantity">
             <h3>Quantity:</h3>
             <p className="quantity-desc">
-              <span className="minus" onClick={decQty}><AiOutlineMinus /></span>
+              <button type="button" aria-label="Decrease quantity" className="minus" onClick={decQty}><AiOutlineMinus /></button>
               <span className="num">{qty}</span>
-              <span className="plus" onClick={incQty}><AiOutlinePlus /></span>
+              <button type="button" aria-label="Increase quantity" className="plus" onClick={incQty}><AiOutlinePlus /></button>
             </p>
           </div>
           <div className="buttons">
@@ -71,7 +82,7 @@ const ProductDetails = ({ product, products }) => {
           <h2>You may also like</h2>
           <div className="marquee">
             <div className="maylike-products-container track">
-              {products.map((item) => (
+              {products?.map((item) => (
                 <Product key={item._id} product={item} />
               ))}
             </div>
@@ -89,13 +100,24 @@ export const getStaticPaths = async () => {
   }
   `;
 
-  const products = await client.fetch(query);
+  let products = [];
+  try {
+    products = await client.fetch(query);
+  } catch (error) {
+    // A Sanity outage must not fail the deploy: with fallback: 'blocking',
+    // product pages are generated on first request instead.
+    console.error('[product/[slug]] Failed to fetch paths:', error);
+    return { paths: [], fallback: 'blocking' };
+  }
 
-  const paths = products.map((product) => ({
-    params: { 
-      slug: product.slug.current
-    }
-  }));
+  // Skip documents without a slug instead of crashing the build on them.
+  const paths = (products || [])
+    .filter((product) => product?.slug?.current)
+    .map((product) => ({
+      params: {
+        slug: product.slug.current
+      }
+    }));
 
   return {
     paths,
@@ -103,17 +125,26 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async ({ params: { slug }}) => {
-  const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
-  const productsQuery = '*[_type == "product"]'
-  
-  const product = await client.fetch(query);
-  const products = await client.fetch(productsQuery);
+export const getStaticProps = async ({ params: { slug } }) => {
+  // Parameterized query ($slug) — never interpolate route params into GROQ.
+  const query = `*[_type == "product" && slug.current == $slug][0]`;
+  const productsQuery = '*[_type == "product"]';
 
-  console.log(product);
+  const [product, products] = await Promise.all([
+    client.fetch(query, { slug }),
+    client.fetch(productsQuery),
+  ]);
+
+  // Unknown/deleted slug -> proper 404 instead of a 500 from
+  // destructuring null in the component.
+  if (!product) {
+    return { notFound: true };
+  }
 
   return {
-    props: { products, product }
+    props: { products: products || [], product },
+    // ISR: price/content edits in Sanity propagate without a redeploy.
+    revalidate: 60,
   }
 }
 
