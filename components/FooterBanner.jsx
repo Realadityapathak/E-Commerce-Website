@@ -3,14 +3,7 @@ import Link from 'next/link';
 
 import { urlFor } from '../lib/client';
 
-const FooterBanner = ({ footerBanner }) => {
-  // Guard first, destructure second: with no banner published in the CMS
-  // the previous version crashed the homepage during destructuring.
-  if (!footerBanner) return null;
-
-  const { discount, largeText1, largeText2, saleTime, smallText, midText, desc, product, buttonText, image } = footerBanner;
-  const imageUrl = urlFor(image);
-
+const FooterBanner = ({ footerBanner: { discount, largeText1, largeText2, saleTime, smallText, midText, desc, product, buttonText, image } }) => {
   return (
     <div className="footer-banner-container">
       <div className="banner-desc">
@@ -29,13 +22,9 @@ const FooterBanner = ({ footerBanner }) => {
           </Link>
         </div>
 
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={midText || 'Promotional product'}
-            className="footer-banner-image"
-          />
-        )}
+        <img 
+          src={urlFor(image)} className="footer-banner-image"
+        />
       </div>
     </div>
   )

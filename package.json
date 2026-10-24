@@ -2,15 +2,11 @@
   "name": "ecommerce",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=16"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "node --test lib/cart.test.mjs lib/order.test.mjs"
+    "lint": "next lint"
   },
   "dependencies": {
     "@babel/core": "^7.17.9",

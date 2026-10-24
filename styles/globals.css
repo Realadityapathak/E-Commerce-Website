@@ -527,22 +527,10 @@ padding: 30px 65px;
   border: 1px solid gray;
 padding: 6px;
 }
-.quantity-desc span,
-.quantity-desc button{
+.quantity-desc span{
   font-size: 16px;
   padding: 6px 12px;
   cursor: pointer;
-}
-.quantity-desc button{
-  background: none;
-  border: none;
-  border-radius: 0;
-  font-family: inherit;
-  line-height: inherit;
-}
-.quantity-desc button:focus-visible{
-  outline: 2px solid #324d67;
-  outline-offset: -2px;
 }
 .quantity-desc .minus{
   border-right: 1px solid gray;
